@@ -1,53 +1,50 @@
+const commonConfig = require('./webpack.config.js');
+
+const merge = require('webpack-merge');
 const path = require('path');
 
-module.exports = {
-
-  /*入口*/
-  entry: [
-    'react-hot-loader/patch',
-    path.join(__dirname, 'src/app.js')
-  ],
-
-  /*输出到dist文件夹，输出文件名字为bundle.js*/
+const devConfig = {
+  entry: {
+    app: [
+      'babel-polyfill',
+      'react-hot-loader/patch',
+      path.join(__dirname, 'src/app.js')
+    ]
+  },
   output: {
-    path: path.join(__dirname, './dist'),
-    filename: 'bundle.js',
-    chunkFilename: '[name].js'
+    filename: '[name].[hash].js'
   },
-  resolve: {
-    alias: {
-      pages: path.join(__dirname, 'src/pages'),
-      component: path.join(__dirname, 'src/component'),
-      router: path.join(__dirname, 'src/router'),
-      actions: path.join(__dirname, 'src/redux/actions'),
-      reducers: path.join(__dirname, 'src/redux/reducers')
-    }
-  },
+  // resolve: {
+  //     alias: {
+  //         pages: path.join(__dirname, 'src/pages'),
+  //         component: path.join(__dirname, 'src/component'),
+  //         router: path.join(__dirname, 'src/router'),
+  //         actions: path.join(__dirname, 'src/redux/actions'),
+  //         reducers: path.join(__dirname, 'src/redux/reducers')
+  //     }
+  // },
   module: {
     rules: [{
-      test: /\.js$/,
-      use: ['babel-loader?cacheDirectory=true'],
-      include: path.join(__dirname, 'src')
-    }, {
       test: /\.css$/,
-      use: ['style-loader', 'css-loader']
+      use: ['style-loader', 'css-loader', 'postcss-loader']
     }, {
       test: /\.(scss|sass)$/,
-      loader: ['style-loader', 'css-loader', 'sass-loader']
-    }, {
-      test: /\.(png|jpe?g|gif|svg)$/,
-      use: [{
-        loader: 'url-loader',
-        options: {
-          limit: 8192
-        }
-      }]
+      loader: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
     }]
   },
   devServer: {
     contentBase: path.join(__dirname, './dist'),
     historyApiFallback: true,
     host: '0.0.0.0'
-  },
-  // devtool: 'inline-source-map'
+  }
 };
+
+module.exports = merge({
+  customizeArray(a, b, key) {
+    /* entry.app不合并，全替换 */
+    if (key === 'entry.app') {
+      return b;
+    }
+    return undefined;
+  }
+})(commonConfig, devConfig);

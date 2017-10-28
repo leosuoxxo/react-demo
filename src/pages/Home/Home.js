@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from 'react';
+import React, { Component } from 'react';
 
 import './home.scss';
 import './test.sass';
@@ -10,22 +8,22 @@ export default class Home extends Component {
     super(props);
     this.state = {
       count: 0
-    }
+    };
   }
 
   _handleClick() {
     this.setState({
-      count: ++this.state.count
+      count: this.state.count + 1
     });
   }
 
   render() {
     return (
       <div>
-        this is home~<br/>
-        現在數量：{this.state.count}<br/>
+        this is home<br />
+        現在數量：{this.state.count}<br />
         <button onClick={() => this._handleClick()}>增加</button>
-            </div>
-    )
+      </div>
+    );
   }
 }
